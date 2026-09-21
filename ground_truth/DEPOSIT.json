@@ -1,0 +1,46 @@
+{
+  "program": "DEPOSIT",
+  "source_file": "src/DEPOSIT.cbl",
+  "sme_validated": true,
+  "rules": [
+    {
+      "rule_id": "DEPOSIT-R1",
+      "paragraph": "2100-VALIDATE-ACCOUNT",
+      "citation": "src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT",
+      "rule_text": "A deposit is rejected if the account status is closed."
+    },
+    {
+      "rule_id": "DEPOSIT-R2",
+      "paragraph": "2100-VALIDATE-ACCOUNT",
+      "citation": "src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT",
+      "rule_text": "A deposit reactivates a dormant account, changing its status to active."
+    },
+    {
+      "rule_id": "DEPOSIT-R3",
+      "paragraph": "3000-POST-DEPOSIT",
+      "citation": "src/DEPOSIT.cbl:3000-POST-DEPOSIT",
+      "rule_text": "The deposit amount is added to the account balance and the last-transaction date is refreshed to today."
+    },
+    {
+      "rule_id": "DEPOSIT-R4",
+      "paragraph": "3100-CHECK-FEE-WAIVER",
+      "citation": "src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER",
+      "rule_text": "If the resulting balance is $500.00 or more, the monthly maintenance fee is waived."
+    },
+    {
+      "rule_id": "DEPOSIT-R5",
+      "paragraph": "3100-CHECK-FEE-WAIVER",
+      "citation": "src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER",
+      "rule_text": "If the resulting balance is below $500.00, a $5.00 monthly maintenance fee is charged immediately against the balance."
+    },
+    {
+      "rule_id": "DEPOSIT-R6",
+      "paragraph": "4000-WRITE-TRANSACTION",
+      "citation": "src/DEPOSIT.cbl:4000-WRITE-TRANSACTION",
+      "rule_text": "Every successful deposit is recorded in the transaction log with transaction type code 'DP' and the post-deposit balance."
+    }
+  ],
+  "notes": [
+    "DEPOSIT-R4 uses a GREATER-THAN-OR-EQUAL comparison at exactly $500.00. Compare against ACCTMSTR 4100-CHECK-FEE-WAIVER-MSTR, which applies the same $500.00 threshold with STRICTLY-GREATER-THAN - a $500.00 exact balance is waived here but charged there. This drift is intentional in the fixture."
+  ]
+}

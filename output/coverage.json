@@ -1,0 +1,38 @@
+{
+  "ACCTINQ": {
+    "paragraphs_total": 4,
+    "paragraphs_processed": 4,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  },
+  "ACCTMSTR": {
+    "paragraphs_total": 20,
+    "paragraphs_processed": 20,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  },
+  "DEPOSIT": {
+    "paragraphs_total": 8,
+    "paragraphs_processed": 8,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  },
+  "INTCALC": {
+    "paragraphs_total": 9,
+    "paragraphs_processed": 9,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  },
+  "STMTGEN": {
+    "paragraphs_total": 7,
+    "paragraphs_processed": 7,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  },
+  "WITHDRWL": {
+    "paragraphs_total": 8,
+    "paragraphs_processed": 8,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
+  }
+}

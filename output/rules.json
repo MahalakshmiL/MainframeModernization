@@ -1,0 +1,296 @@
+[
+  {
+    "rule_id": "ACCTINQ-A1",
+    "program": "ACCTINQ",
+    "paragraph": "1000-READ-ACCOUNT",
+    "citation": "src/ACCTINQ.cbl:1000-READ-ACCOUNT",
+    "rule_text": "When a customer's account cannot be found, the system displays an \"ACCOUNT NOT FOUND\" message and does not proceed to show any account details."
+  },
+  {
+    "rule_id": "ACCTINQ-A2",
+    "program": "ACCTINQ",
+    "paragraph": "1000-READ-ACCOUNT",
+    "citation": "src/ACCTINQ.cbl:1000-READ-ACCOUNT",
+    "rule_text": "This account inquiry function is read-only; it does not make any updates to account information."
+  },
+  {
+    "rule_id": "ACCTINQ-A3",
+    "program": "ACCTINQ",
+    "paragraph": "2000-DISPLAY-BALANCE",
+    "citation": "src/ACCTINQ.cbl:2000-DISPLAY-BALANCE",
+    "rule_text": "When an account is found, the system displays the account's identifying number, its current balance, and its current status."
+  },
+  {
+    "rule_id": "ACCTMSTR-A1",
+    "program": "ACCTMSTR",
+    "paragraph": "2100-READ-NEXT-ACCOUNT",
+    "citation": "src/ACCTMSTR.cbl:2100-READ-NEXT-ACCOUNT",
+    "rule_text": "Only Savings and Checking are recognized account types; any other account type is logged as a data exception but the account is still processed."
+  },
+  {
+    "rule_id": "ACCTMSTR-A2",
+    "program": "ACCTMSTR",
+    "paragraph": "2200-VALIDATE-ACCOUNT-TYPE",
+    "citation": "src/ACCTMSTR.cbl:2200-VALIDATE-ACCOUNT-TYPE",
+    "rule_text": "When an account's type is neither Savings nor Checking, the system displays a data exception message identifying the account, but continues processing rather than rejecting it."
+  },
+  {
+    "rule_id": "ACCTMSTR-A3",
+    "program": "ACCTMSTR",
+    "paragraph": "3200-MARK-DORMANT",
+    "citation": "src/ACCTMSTR.cbl:3200-MARK-DORMANT",
+    "rule_text": "An active account that has had no transaction for more than 180 days is automatically reclassified as dormant, and the count of dormant accounts is incremented."
+  },
+  {
+    "rule_id": "ACCTMSTR-A4",
+    "program": "ACCTMSTR",
+    "paragraph": "3300-CLOSE-LONG-DORMANT",
+    "citation": "src/ACCTMSTR.cbl:3300-CLOSE-LONG-DORMANT",
+    "rule_text": "A dormant account that has had no transaction for more than 365 days is automatically closed by the system, and the count of closed accounts is incremented."
+  },
+  {
+    "rule_id": "ACCTMSTR-A5",
+    "program": "ACCTMSTR",
+    "paragraph": "3400-SET-FEE-CODE",
+    "citation": "src/ACCTMSTR.cbl:3400-SET-FEE-CODE",
+    "rule_text": "For checking accounts only, a fee code is assigned based on the current balance: an overdrawn balance results in an overdraft fee code, and a non-negative balance results in the standard fee code."
+  },
+  {
+    "rule_id": "ACCTMSTR-A6",
+    "program": "ACCTMSTR",
+    "paragraph": "3400-SET-FEE-CODE",
+    "citation": "src/ACCTMSTR.cbl:3400-SET-FEE-CODE",
+    "rule_text": "Savings accounts must never have their fee code set by this process, because the fee code field physically shares storage with the stored interest rate for the account; setting it would corrupt the account's interest rate."
+  },
+  {
+    "rule_id": "ACCTMSTR-A7",
+    "program": "ACCTMSTR",
+    "paragraph": "4000-MONTHLY-FEE-PROCESSING",
+    "citation": "src/ACCTMSTR.cbl:4000-MONTHLY-FEE-PROCESSING",
+    "rule_text": "Monthly maintenance fee processing is only evaluated for accounts that are currently active; dormant or closed accounts are not charged the monthly fee."
+  },
+  {
+    "rule_id": "ACCTMSTR-A8",
+    "program": "ACCTMSTR",
+    "paragraph": "4100-CHECK-FEE-WAIVER-MSTR",
+    "citation": "src/ACCTMSTR.cbl:4100-CHECK-FEE-WAIVER-MSTR",
+    "rule_text": "If an active account's balance is greater than the fee-waiver threshold (500.00), the monthly maintenance fee is waived for that account; otherwise the fee is applied and a fee transaction is recorded."
+  },
+  {
+    "rule_id": "ACCTMSTR-A9",
+    "program": "ACCTMSTR",
+    "paragraph": "4200-APPLY-MONTHLY-FEE",
+    "citation": "src/ACCTMSTR.cbl:4200-APPLY-MONTHLY-FEE",
+    "rule_text": "When the monthly maintenance fee applies, the fee amount is deducted from the account's balance and a running count of fees charged is increased."
+  },
+  {
+    "rule_id": "ACCTMSTR-A10",
+    "program": "ACCTMSTR",
+    "paragraph": "4300-WRITE-FEE-TRANSACTION",
+    "citation": "src/ACCTMSTR.cbl:4300-WRITE-FEE-TRANSACTION",
+    "rule_text": "Each time a monthly maintenance fee is charged, a fee transaction record is created showing the account, a fee transaction type, the fee amount, the resulting balance, and the processing date."
+  },
+  {
+    "rule_id": "ACCTMSTR-A11",
+    "program": "ACCTMSTR",
+    "paragraph": "5100-UPDATE-DORMANT-COUNTER",
+    "citation": "src/ACCTMSTR.cbl:5100-UPDATE-DORMANT-COUNTER",
+    "rule_text": "Each account record stores the number of days since its last transaction, updated every time the account is processed."
+  },
+  {
+    "rule_id": "ACCTMSTR-A12",
+    "program": "ACCTMSTR",
+    "paragraph": "7000-PRODUCE-CONTROL-TOTALS",
+    "citation": "src/ACCTMSTR.cbl:7000-PRODUCE-CONTROL-TOTALS",
+    "rule_text": "At the end of each run, a control report is produced showing the total number of accounts processed, the number newly marked dormant, the number closed, and the number of monthly fees charged."
+  },
+  {
+    "rule_id": "DEPOSIT-A1",
+    "program": "DEPOSIT",
+    "paragraph": "2000-READ-ACCOUNT",
+    "citation": "src/DEPOSIT.cbl:2000-READ-ACCOUNT",
+    "rule_text": "If the account number on the deposit cannot be found in the account file, the deposit is rejected."
+  },
+  {
+    "rule_id": "DEPOSIT-A2",
+    "program": "DEPOSIT",
+    "paragraph": "2100-VALIDATE-ACCOUNT",
+    "citation": "src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT",
+    "rule_text": "A deposit is rejected if the account status is closed."
+  },
+  {
+    "rule_id": "DEPOSIT-A3",
+    "program": "DEPOSIT",
+    "paragraph": "2100-VALIDATE-ACCOUNT",
+    "citation": "src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT",
+    "rule_text": "If the account is currently dormant, a deposit reactivates the account by changing its status to active."
+  },
+  {
+    "rule_id": "DEPOSIT-A4",
+    "program": "DEPOSIT",
+    "paragraph": "3000-POST-DEPOSIT",
+    "citation": "src/DEPOSIT.cbl:3000-POST-DEPOSIT",
+    "rule_text": "The deposit amount is added to the account's current balance."
+  },
+  {
+    "rule_id": "DEPOSIT-A5",
+    "program": "DEPOSIT",
+    "paragraph": "3000-POST-DEPOSIT",
+    "citation": "src/DEPOSIT.cbl:3000-POST-DEPOSIT",
+    "rule_text": "When a deposit is posted, the account's last-transaction date is updated to today's date."
+  },
+  {
+    "rule_id": "DEPOSIT-A6",
+    "program": "DEPOSIT",
+    "paragraph": "3100-CHECK-FEE-WAIVER",
+    "citation": "src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER",
+    "rule_text": "If the account balance after the deposit is at or above the fee waiver threshold, the monthly maintenance fee is waived for this account."
+  },
+  {
+    "rule_id": "DEPOSIT-A7",
+    "program": "DEPOSIT",
+    "paragraph": "3100-CHECK-FEE-WAIVER",
+    "citation": "src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER",
+    "rule_text": "If the account balance after the deposit is below the fee waiver threshold, a monthly maintenance fee is immediately deducted from the account balance."
+  },
+  {
+    "rule_id": "DEPOSIT-A8",
+    "program": "DEPOSIT",
+    "paragraph": "4000-WRITE-TRANSACTION",
+    "citation": "src/DEPOSIT.cbl:4000-WRITE-TRANSACTION",
+    "rule_text": "Every accepted deposit is recorded as a transaction log entry showing the account, a deposit transaction type code, the deposit amount, the resulting account balance, and the transaction date."
+  },
+  {
+    "rule_id": "DEPOSIT-A9",
+    "program": "DEPOSIT",
+    "paragraph": "4000-WRITE-TRANSACTION",
+    "citation": "src/DEPOSIT.cbl:4000-WRITE-TRANSACTION",
+    "rule_text": "The account record is updated on file to reflect the new balance and status resulting from the deposit."
+  },
+  {
+    "rule_id": "INTCALC-A1",
+    "program": "INTCALC",
+    "paragraph": "2100-CHECK-ELIGIBLE",
+    "citation": "src/INTCALC.cbl:2100-CHECK-ELIGIBLE",
+    "rule_text": "Monthly interest is calculated only for accounts that are both a savings account and currently in active status. Checking accounts, dormant accounts, and closed accounts never earn interest."
+  },
+  {
+    "rule_id": "INTCALC-A2",
+    "program": "INTCALC",
+    "paragraph": "2200-APPLY-RATE-TIER",
+    "citation": "src/INTCALC.cbl:2200-APPLY-RATE-TIER",
+    "rule_text": "If an eligible account's balance is $10,000.00 or more, the account earns a bonus annual interest rate of 4.5%, overriding the rate normally on file for that account."
+  },
+  {
+    "rule_id": "INTCALC-A3",
+    "program": "INTCALC",
+    "paragraph": "2200-APPLY-RATE-TIER",
+    "citation": "src/INTCALC.cbl:2200-APPLY-RATE-TIER",
+    "rule_text": "If an eligible account's balance is below $10,000.00, the account earns the annual interest rate stored on the account record rather than the bonus rate."
+  },
+  {
+    "rule_id": "INTCALC-A4",
+    "program": "INTCALC",
+    "paragraph": "2200-APPLY-RATE-TIER",
+    "citation": "src/INTCALC.cbl:2200-APPLY-RATE-TIER",
+    "rule_text": "The stored interest rate on an account record is only meaningful for savings accounts; the same storage location is used for a fee code on other account types, so this rate value must only be used after confirming the account is a savings account."
+  },
+  {
+    "rule_id": "INTCALC-A5",
+    "program": "INTCALC",
+    "paragraph": "2300-COMPUTE-INTEREST",
+    "citation": "src/INTCALC.cbl:2300-COMPUTE-INTEREST",
+    "rule_text": "Monthly interest for an eligible account is calculated as the account balance multiplied by the applicable annual interest rate, divided by 12, rounded to the nearest cent."
+  },
+  {
+    "rule_id": "INTCALC-A6",
+    "program": "INTCALC",
+    "paragraph": "3000-POST-INTEREST",
+    "citation": "src/INTCALC.cbl:3000-POST-INTEREST",
+    "rule_text": "The calculated monthly interest is added to the account's balance at the time interest is posted."
+  },
+  {
+    "rule_id": "INTCALC-A7",
+    "program": "INTCALC",
+    "paragraph": "3000-POST-INTEREST",
+    "citation": "src/INTCALC.cbl:3000-POST-INTEREST",
+    "rule_text": "When interest is posted, the account's last-transaction date is updated to the current processing date."
+  },
+  {
+    "rule_id": "INTCALC-A8",
+    "program": "INTCALC",
+    "paragraph": "4000-WRITE-TRANSACTION",
+    "citation": "src/INTCALC.cbl:4000-WRITE-TRANSACTION",
+    "rule_text": "Each time interest is posted to an account, a transaction record is created with transaction type 'IN' (interest), recording the interest amount, the account's balance after posting, and the transaction date."
+  },
+  {
+    "rule_id": "INTCALC-A9",
+    "program": "INTCALC",
+    "paragraph": "4000-WRITE-TRANSACTION",
+    "citation": "src/INTCALC.cbl:4000-WRITE-TRANSACTION",
+    "rule_text": "The account's master record is updated (rewritten) to reflect the new balance whenever interest is posted."
+  },
+  {
+    "rule_id": "STMTGEN-A1",
+    "program": "STMTGEN",
+    "paragraph": "3000-PRINT-HEADER",
+    "citation": "src/STMTGEN.cbl:3000-PRINT-HEADER",
+    "rule_text": "Each customer statement begins with a header line showing the account identifier and the current account balance."
+  },
+  {
+    "rule_id": "STMTGEN-A2",
+    "program": "STMTGEN",
+    "paragraph": "4000-PRINT-TRANSACTIONS",
+    "citation": "src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS",
+    "rule_text": "For each account being statemented, only transactions belonging to that same account are listed on its statement."
+  },
+  {
+    "rule_id": "STMTGEN-A3",
+    "program": "STMTGEN",
+    "paragraph": "4000-PRINT-TRANSACTIONS",
+    "citation": "src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS",
+    "rule_text": "Each transaction line printed on the statement shows the transaction type, amount, and date."
+  },
+  {
+    "rule_id": "STMTGEN-A4",
+    "program": "STMTGEN",
+    "paragraph": "5000-UPDATE-LAST-STMT-DATE",
+    "citation": "src/STMTGEN.cbl:5000-UPDATE-LAST-STMT-DATE",
+    "rule_text": "Whenever a statement is generated for an account, the account's last-activity date is reset to the current date, even if the account had no actual customer transactions during the statement period. This prevents the account from later being flagged as dormant solely due to the lack of transactions in that cycle."
+  },
+  {
+    "rule_id": "WITHDRWL-A1",
+    "program": "WITHDRWL",
+    "paragraph": "2000-READ-ACCOUNT",
+    "citation": "src/WITHDRWL.cbl:2000-READ-ACCOUNT",
+    "rule_text": "If the account number on the withdrawal request cannot be found on file, the withdrawal is rejected."
+  },
+  {
+    "rule_id": "WITHDRWL-A2",
+    "program": "WITHDRWL",
+    "paragraph": "2100-VALIDATE-STATUS",
+    "citation": "src/WITHDRWL.cbl:2100-VALIDATE-STATUS",
+    "rule_text": "A withdrawal is rejected if the account is closed or dormant; the customer must reactivate a dormant account with a deposit before they can withdraw funds."
+  },
+  {
+    "rule_id": "WITHDRWL-A3",
+    "program": "WITHDRWL",
+    "paragraph": "2200-VALIDATE-FUNDS",
+    "citation": "src/WITHDRWL.cbl:2200-VALIDATE-FUNDS",
+    "rule_text": "A withdrawal is rejected if it would reduce the account balance below a required $100.00 overdraft cushion."
+  },
+  {
+    "rule_id": "WITHDRWL-A4",
+    "program": "WITHDRWL",
+    "paragraph": "3000-POST-WITHDRAWAL",
+    "citation": "src/WITHDRWL.cbl:3000-POST-WITHDRAWAL",
+    "rule_text": "When a withdrawal is approved, the withdrawal amount is subtracted from the account balance and the account's last transaction date is updated to today's date."
+  },
+  {
+    "rule_id": "WITHDRWL-A5",
+    "program": "WITHDRWL",
+    "paragraph": "4000-WRITE-TRANSACTION",
+    "citation": "src/WITHDRWL.cbl:4000-WRITE-TRANSACTION",
+    "rule_text": "For every approved withdrawal, a transaction record is created recording the account number, a 'WD' (withdrawal) transaction type, the withdrawal amount, the resulting account balance, and today's date; the account's master record is then updated to reflect the new balance."
+  }
+]

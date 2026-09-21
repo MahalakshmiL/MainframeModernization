@@ -1,0 +1,36 @@
+{
+  "field": "ACCT-INT-RATE",
+  "equivalence_class": [
+    "ACCT-FEE-CODE",
+    "ACCT-INT-RATE"
+  ],
+  "shares_storage": true,
+  "db2_mapping": {
+    "ACCT-FEE-CODE": {
+      "column": "ACCT_FEE_CODE",
+      "table": "ACCOUNT_MASTER"
+    },
+    "ACCT-INT-RATE": {
+      "column": "ACCT_INT_RATE",
+      "table": "ACCOUNT_MASTER"
+    }
+  },
+  "live_writers": [
+    {
+      "program": "ACCTMSTR",
+      "paragraph": "3400-SET-FEE-CODE",
+      "reachable": true,
+      "field": "ACCT-FEE-CODE"
+    }
+  ],
+  "live_readers": [
+    {
+      "program": "INTCALC",
+      "paragraph": "2200-APPLY-RATE-TIER",
+      "reachable": true,
+      "field": "ACCT-INT-RATE"
+    }
+  ],
+  "dead_code_touches": [],
+  "impact_summary": "ACCT-INT-RATE physically shares storage (REDEFINES) with ACCT-FEE-CODE. They are the same bytes under different names, so a write to one is a write to all of them - lineage below covers the whole group. Written by: ACCTMSTR:3400-SET-FEE-CODE. Read by: INTCALC:2200-APPLY-RATE-TIER. Lands in DB2 as: ACCT-FEE-CODE -> ACCOUNT_MASTER.ACCT_FEE_CODE; ACCT-INT-RATE -> ACCOUNT_MASTER.ACCT_INT_RATE."
+}

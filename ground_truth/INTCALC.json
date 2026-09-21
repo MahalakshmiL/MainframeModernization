@@ -1,0 +1,46 @@
+{
+  "program": "INTCALC",
+  "source_file": "src/INTCALC.cbl",
+  "sme_validated": true,
+  "rules": [
+    {
+      "rule_id": "INTCALC-R1",
+      "paragraph": "2100-CHECK-ELIGIBLE",
+      "citation": "src/INTCALC.cbl:2100-CHECK-ELIGIBLE",
+      "rule_text": "Interest is calculated only for accounts that are savings type and whose status is active."
+    },
+    {
+      "rule_id": "INTCALC-R2",
+      "paragraph": "2200-APPLY-RATE-TIER",
+      "citation": "src/INTCALC.cbl:2200-APPLY-RATE-TIER",
+      "rule_text": "Accounts with a balance of $10,000.00 or more earn a bonus annual interest rate of 4.5% instead of the account's stored rate."
+    },
+    {
+      "rule_id": "INTCALC-R3",
+      "paragraph": "2200-APPLY-RATE-TIER",
+      "citation": "src/INTCALC.cbl:2200-APPLY-RATE-TIER",
+      "rule_text": "Accounts below $10,000.00 earn the rate stored in ACCT-INT-RATE."
+    },
+    {
+      "rule_id": "INTCALC-R4",
+      "paragraph": "2300-COMPUTE-INTEREST",
+      "citation": "src/INTCALC.cbl:2300-COMPUTE-INTEREST",
+      "rule_text": "Monthly interest equals the account balance multiplied by the annual rate, divided by 12."
+    },
+    {
+      "rule_id": "INTCALC-R5",
+      "paragraph": "3000-POST-INTEREST",
+      "citation": "src/INTCALC.cbl:3000-POST-INTEREST",
+      "rule_text": "Interest earned is added to the account balance."
+    },
+    {
+      "rule_id": "INTCALC-R6",
+      "paragraph": "4000-WRITE-TRANSACTION",
+      "citation": "src/INTCALC.cbl:4000-WRITE-TRANSACTION",
+      "rule_text": "Interest posted is logged as a transaction with type code 'IN' and the post-interest balance."
+    }
+  ],
+  "notes": [
+    "ACCT-INT-RATE in INTCALC-R3 is only meaningful for savings accounts - it physically shares storage with ACCT-FEE-CODE via REDEFINES in ACCTREC.cpy (see copybooks/ACCTREC.cpy and ACCTMSTR 3400-SET-FEE-CODE). A correct field-level lineage answer for 'what reads/writes this field' must account for both names."
+  ]
+}

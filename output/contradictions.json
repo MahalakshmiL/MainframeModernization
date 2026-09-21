@@ -1,0 +1,33 @@
+{
+  "numeric_contradictions": [],
+  "field_relationship_contradictions": [
+    {
+      "page": "Account-Maintenance-Field-Reference.md",
+      "page_statement": "- `ACCT-INT-RATE` \u2014 the account's stored interest rate. Independent",
+      "field": "ACCT-INT-RATE",
+      "actual_equivalence_class": [
+        "ACCT-FEE-CODE",
+        "ACCT-INT-RATE",
+        "ACCT-RATE-INFO",
+        "ACCT-RATE-INFO-R"
+      ],
+      "reason": "ACCT-INT-RATE is described as independent/unrelated but physically shares storage (REDEFINES) with ACCT-FEE-CODE, ACCT-RATE-INFO, ACCT-RATE-INFO-R."
+    }
+  ],
+  "threshold_drift": [
+    {
+      "field": "ACCT-BALANCE",
+      "value": 500.0,
+      "a": {
+        "program": "ACCTMSTR",
+        "paragraph": "4100-CHECK-FEE-WAIVER-MSTR",
+        "operator": ">"
+      },
+      "b": {
+        "program": "DEPOSIT",
+        "paragraph": "3100-CHECK-FEE-WAIVER",
+        "operator": ">="
+      }
+    }
+  ]
+}

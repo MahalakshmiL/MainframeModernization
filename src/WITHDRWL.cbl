@@ -1,0 +1,97 @@
+      ******************************************************************
+      * PROGRAM: WITHDRWL
+      * PURPOSE: POST A WITHDRAWAL TRANSACTION WITH OVERDRAFT CUSHION.
+      ******************************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WITHDRWL.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ACCOUNT-FILE ASSIGN TO ACCTMSTR
+               ORGANIZATION IS INDEXED
+               ACCESS IS RANDOM
+               RECORD KEY IS ACCT-ID.
+           SELECT TRANSACTION-FILE ASSIGN TO TRANLOG
+               ORGANIZATION IS SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD  ACCOUNT-FILE.
+           COPY ACCTREC.
+       FD  TRANSACTION-FILE.
+           COPY TRANREC.
+
+       WORKING-STORAGE SECTION.
+       01  WS-WITHDRAWAL-AMOUNT        PIC S9(9)V99 COMP-3.
+       01  WS-OVERDRAFT-CUSHION        PIC S9(9)V99 COMP-3 VALUE -100.00.
+       01  WS-PROJECTED-BALANCE        PIC S9(9)V99 COMP-3.
+       01  WS-REJECT-SWITCH            PIC X(01) VALUE 'N'.
+           88  WS-REJECT               VALUE 'Y'.
+
+       PROCEDURE DIVISION.
+       0000-MAIN.
+           PERFORM 1000-INITIALIZE
+           PERFORM 2000-READ-ACCOUNT
+           PERFORM 2100-VALIDATE-STATUS
+           IF NOT WS-REJECT
+               PERFORM 2200-VALIDATE-FUNDS
+           END-IF
+           IF NOT WS-REJECT
+               PERFORM 3000-POST-WITHDRAWAL
+               PERFORM 4000-WRITE-TRANSACTION
+           END-IF
+           PERFORM 9000-TERMINATE
+           STOP RUN.
+
+       1000-INITIALIZE.
+           OPEN I-O ACCOUNT-FILE
+           OPEN EXTEND TRANSACTION-FILE
+           MOVE 'N' TO WS-REJECT-SWITCH.
+
+       2000-READ-ACCOUNT.
+           READ ACCOUNT-FILE
+               INVALID KEY
+                   DISPLAY 'ACCOUNT NOT FOUND'
+                   MOVE 'Y' TO WS-REJECT-SWITCH
+           END-READ.
+
+      *----------------------------------------------------------------
+      * RULE: A WITHDRAWAL IS REJECTED IF THE ACCOUNT IS CLOSED OR
+      * DORMANT. THE CUSTOMER MUST REACTIVATE A DORMANT ACCOUNT WITH
+      * A DEPOSIT BEFORE WITHDRAWING.
+      *----------------------------------------------------------------
+       2100-VALIDATE-STATUS.
+           IF ACCT-STATUS-CLOSED OR ACCT-STATUS-DORMANT
+               DISPLAY 'WITHDRAWAL REJECTED - ACCOUNT NOT ACTIVE'
+               MOVE 'Y' TO WS-REJECT-SWITCH
+           END-IF.
+
+      *----------------------------------------------------------------
+      * RULE: A WITHDRAWAL IS REJECTED IF IT WOULD TAKE THE BALANCE
+      * BELOW A $100.00 OVERDRAFT CUSHION.
+      *----------------------------------------------------------------
+       2200-VALIDATE-FUNDS.
+           COMPUTE WS-PROJECTED-BALANCE =
+               ACCT-BALANCE - WS-WITHDRAWAL-AMOUNT
+           IF WS-PROJECTED-BALANCE < WS-OVERDRAFT-CUSHION
+               DISPLAY 'WITHDRAWAL REJECTED - INSUFFICIENT FUNDS'
+               MOVE 'Y' TO WS-REJECT-SWITCH
+           END-IF.
+
+       3000-POST-WITHDRAWAL.
+           SUBTRACT WS-WITHDRAWAL-AMOUNT FROM ACCT-BALANCE
+           MOVE FUNCTION CURRENT-DATE(1:8) TO ACCT-LAST-TRAN-DATE.
+
+       4000-WRITE-TRANSACTION.
+           MOVE ACCT-ID TO TRAN-ACCT-ID
+           MOVE 'WD' TO TRAN-TYPE
+           MOVE WS-WITHDRAWAL-AMOUNT TO TRAN-AMOUNT
+           MOVE ACCT-BALANCE TO TRAN-BALANCE-AFTER
+           MOVE FUNCTION CURRENT-DATE(1:8) TO TRAN-DATE
+           WRITE TRANSACTION-RECORD
+           REWRITE ACCOUNT-RECORD.
+
+       9000-TERMINATE.
+           CLOSE ACCOUNT-FILE
+           CLOSE TRANSACTION-FILE.
