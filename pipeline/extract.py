@@ -30,8 +30,11 @@ from pipeline.env import load_dotenv
 DEFAULT_MODEL = os.environ.get("EXTRACT_MODEL", "claude-sonnet-5")
 MAX_TOOL_ITERATIONS = 60
 
-SYSTEM_PROMPT = """You are recovering business rules from legacy COBOL for a bank's \
-core deposit/account-servicing system. You will be given one program at a time.
+SYSTEM_PROMPT = """You are recovering business rules from legacy mainframe code for a \
+bank's core deposit/account-servicing system. The programs you're given are COBOL or \
+PL/I - you'll be told which. "Paragraph" below means a COBOL paragraph or a PL/I \
+procedure, whichever this program uses; the tools work the same way either way. You \
+will be given one program at a time.
 
 Ground rules, no exceptions:
 1. Call get_reachable_paragraphs first. Only paragraphs it returns are live code \
@@ -41,10 +44,12 @@ never be cited as a current business rule.
 saying anything about what it does. Do not guess from the paragraph name.
 3. Call get_field_touches for a paragraph when the rule you're about to write \
 depends on which fields it reads or writes - the tool will also tell you if a \
-field shares physical storage with another field via REDEFINES, which changes \
-what "read" or "write" means for it.
+field shares physical storage with another field (COBOL REDEFINES or PL/I DEFINED), \
+which changes what "read" or "write" means for it. This tool currently only has \
+data for COBOL programs; on a PL/I program it will come back empty - that's \
+expected, not an error, so don't let an empty result stop you from writing the rule.
 4. Call emit_rule once per atomic business rule, in plain language a bank \
-business analyst (not a programmer) would understand - no COBOL keywords, no \
+business analyst (not a programmer) would understand - no COBOL/PL-I keywords, no \
 paragraph-internal variable names unless a person outside IT would recognize \
 them. Every emit_rule call must name the exact paragraph the rule came from.
 5. If a paragraph is purely mechanical (open/close a file, a loop control \
@@ -64,8 +69,8 @@ TOOLS = [
     },
     {
         "name": "get_paragraph_source",
-        "description": "Return the COBOL source text of one paragraph in the "
-                        "current program.",
+        "description": "Return the source text of one paragraph (COBOL) or "
+                        "procedure (PL/I) in the current program.",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -79,7 +84,8 @@ TOOLS = [
         "name": "get_field_touches",
         "description": "Return which copybook fields a paragraph reads/writes, "
                         "and any REDEFINES relationship those fields have with "
-                        "other fields.",
+                        "other fields. COBOL programs only - always returns empty "
+                        "for a PL/I program, which is expected, not an error.",
         "input_schema": {
             "type": "object",
             "properties": {"paragraph": {"type": "string"}},
@@ -188,10 +194,11 @@ class ProgramSession:
 
 def run_extraction_for_program(client, model, program_name, parsed_program, field_index, verbose=True):
     session = ProgramSession(program_name, parsed_program, field_index)
+    language = parsed_program.get("language", "COBOL")
     messages = [{
         "role": "user",
-        "content": f"Extract business rules from program {program_name} "
-                    f"({parsed_program['source_file']}). Start by calling "
+        "content": f"Extract business rules from program {program_name}, written in "
+                    f"{language} ({parsed_program['source_file']}). Start by calling "
                     f"get_reachable_paragraphs.",
     }]
 

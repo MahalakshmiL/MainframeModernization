@@ -15,15 +15,20 @@ run.py - Orchestrates the full pipeline end to end.
                        output/Rule-Recovery-Results.pdf (deterministic;
                        PDF step needs a local Chrome/Chromium/Edge install)
     8. score.py     - precision/recall/F1 + dead-code check vs ground_truth/
+    9. open the generated pages (dashboard, chatbot, guide, wiki preview) in
+                       your default browser - local files, so the chat
+                       assistant on them won't respond (that only works
+                       inside the real claude.ai viewer). Skip with --no-open.
 
-Steps 1, 2, 4, 5, 6, 7 never touch the network. Step 3 is the only one
+Steps 1, 2, 4, 5, 6, 7, 9 never touch the network. Step 3 is the only one
 that does, and this script stops before it (with instructions) if
 ANTHROPIC_API_KEY isn't set, rather than silently skipping it.
 
 Usage:
-    python run.py                      # full pipeline
-    python run.py --skip-extract       # steps 1,2,4,5,6,7 only, reusing
+    python run.py                      # full pipeline, opens pages when done
+    python run.py --skip-extract       # steps 1,2,4,5,6,7,9 only, reusing
                                         # an existing output/rules.json
+    python run.py --no-open            # don't auto-open the browser
     python run.py --lineage-field ACCT-INT-RATE
 """
 
@@ -32,6 +37,7 @@ import json
 import os
 import subprocess
 import sys
+import webbrowser
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent
@@ -111,6 +117,10 @@ def run_wiki_and_contradictions():
     (OUTPUT_DIR / "wiki_page.confluence").write_text(page)
     print(f"  {len(rules)} rules rendered -> output/wiki_page.confluence")
 
+    from pipeline.confluence_preview import write_preview
+    preview_path = write_preview()
+    print(f"  rendered preview -> output/{preview_path.name}")
+
     step("6. Contradiction detection vs existing_pages/ and cross-program drift")
     contradictions = find_contradictions(rules, programs)
     (OUTPUT_DIR / "contradictions.json").write_text(json.dumps(contradictions, indent=2))
@@ -134,18 +144,26 @@ def run_wiki_and_contradictions():
 def run_reports():
     from pipeline.report import write_rules_csv, render_dashboard_pdf
     from pipeline.dashboard import write_dashboard
+    from pipeline.chatbot import write_chatbot
+    from pipeline.guide import write_guide
 
     rules_path = OUTPUT_DIR / "rules.json"
     if not rules_path.exists():
         return
 
-    step("7. CSV + dashboard PDF export")
+    step("7. CSV + dashboard PDF + chatbot + guide export")
     rules = json.loads(rules_path.read_text())
     csv_path = write_rules_csv(rules)
     print(f"  {len(rules)} rules -> output/{csv_path.name}")
 
     html_path = write_dashboard()
     print(f"  dashboard -> output/{html_path.name}")
+
+    chatbot_path = write_chatbot()
+    print(f"  chatbot -> output/{chatbot_path.name}")
+
+    guide_path = write_guide()
+    print(f"  guide -> output/{guide_path.name}")
 
     pdf_path, error = render_dashboard_pdf(html_path)
     if pdf_path:
@@ -167,6 +185,21 @@ def run_score():
     subprocess.run(cmd, cwd=PROJECT_ROOT)
 
 
+PAGES_TO_OPEN = ["dashboard.html", "chatbot.html", "guide.html", "wiki_preview.html"]
+
+
+def run_open_pages():
+    existing = [OUTPUT_DIR / name for name in PAGES_TO_OPEN if (OUTPUT_DIR / name).exists()]
+    if not existing:
+        return
+    step("9. Opening pages in your browser")
+    for path in existing:
+        webbrowser.open(path.resolve().as_uri())
+        print(f"  opened output/{path.name}")
+    print("  Note: the chat assistant on these local files won't respond - it only "
+          "activates inside the real claude.ai viewer, not a plain browser tab.")
+
+
 def main():
     argp = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     argp.add_argument("--skip-extract", action="store_true",
@@ -176,6 +209,9 @@ def main():
     argp.add_argument("--lineage-field", default="ACCT-INT-RATE",
                        help="Field to run the impact answer for (default: ACCT-INT-RATE, "
                             "the REDEFINES field)")
+    argp.add_argument("--no-open", action="store_true",
+                       help="Don't automatically open the generated pages in your browser "
+                            "when the run finishes")
     args = argp.parse_args()
 
     programs, field_index = run_deterministic_layer()
@@ -190,6 +226,9 @@ def main():
     run_wiki_and_contradictions()
     run_reports()
     run_score()
+
+    if not args.no_open:
+        run_open_pages()
 
 
 if __name__ == "__main__":

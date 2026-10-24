@@ -1,0 +1,198 @@
+<title>Rule Recovery Wiki Page</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F5F6F3; --panel:#FFFFFF; --panel-2:#EDEFEA;
+    --ink:#1B2430; --ink-soft:#5B6472; --border:rgba(27,36,48,0.12);
+    --accent:#0F8F8A; --accent-soft:rgba(15,143,138,0.10);
+    --good:#1F8A5F; --good-soft:rgba(31,138,95,0.12);
+    --warn:#9A6B12; --warn-soft:rgba(183,121,31,0.14);
+    --bad:#B23B3B; --bad-soft:rgba(178,59,59,0.10);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171A; --panel:#1C2024; --panel-2:#22262B;
+      --ink:#E8EAED; --ink-soft:#9AA3AD; --border:rgba(232,234,237,0.14);
+      --accent:#3DDAC3; --accent-soft:rgba(61,218,195,0.14);
+      --good:#34C185; --good-soft:rgba(52,193,133,0.14);
+      --warn:#E0A93E; --warn-soft:rgba(224,169,62,0.16);
+      --bad:#E2685F; --bad-soft:rgba(226,104,95,0.14);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171A; --panel:#1C2024; --panel-2:#22262B;
+    --ink:#E8EAED; --ink-soft:#9AA3AD; --border:rgba(232,234,237,0.14);
+    --accent:#3DDAC3; --accent-soft:rgba(61,218,195,0.14);
+    --good:#34C185; --good-soft:rgba(52,193,133,0.14);
+    --warn:#E0A93E; --warn-soft:rgba(224,169,62,0.16);
+    --bad:#E2685F; --bad-soft:rgba(226,104,95,0.14);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,sans-serif;padding:28px 16px 64px;}
+  .wrap{max-width:840px;margin:0 auto;}
+  code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+
+  .banner{
+    display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--border);
+    border-radius:10px;padding:11px 14px;margin-bottom:24px;font-size:12.5px;color:var(--ink-soft);
+  }
+  .banner b{color:var(--ink);}
+  .banner .tag{
+    font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    background:var(--warn-soft);color:var(--warn);border-radius:4px;padding:2px 6px;flex-shrink:0;
+  }
+
+  .page{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px 36px;}
+  .page h1{font-family:"Fraunces",Georgia,serif;font-size:27px;font-weight:600;margin:0 0 18px;letter-spacing:-.01em;}
+  .page h2{font-family:"Fraunces",Georgia,serif;font-size:19px;font-weight:600;margin:30px 0 10px;letter-spacing:-.005em;}
+  .page h2:first-of-type{margin-top:0;}
+  .page p{font-size:13.5px;line-height:1.6;color:var(--ink);margin:0 0 10px;}
+  .page hr{border:none;border-top:1px solid var(--border);margin:26px 0;}
+
+  .panel{border-radius:8px;padding:12px 16px;margin:0 0 14px;font-size:13px;line-height:1.55;}
+  .panel b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+  .panel.info{background:var(--accent-soft);color:var(--ink);}
+  .panel.info b{color:var(--accent);}
+  .panel.note{background:var(--warn-soft);color:var(--ink);}
+  .panel.note b{color:var(--warn);}
+  .panel p{margin:0;color:inherit;}
+
+  .table-wrap{overflow-x:auto;margin:0 0 6px;}
+  table{width:100%;min-width:640px;table-layout:fixed;border-collapse:collapse;font-size:12.5px;}
+  th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);
+    border-bottom:2px solid var(--border);padding:7px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  td{border-bottom:1px solid var(--border);padding:8px 10px;vertical-align:top;line-height:1.5;word-wrap:break-word;}
+  th:nth-child(1), td:nth-child(1){width:8%;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);}
+  th:nth-child(2), td:nth-child(2){width:12%;font-family:"JetBrains Mono",monospace;font-size:11px;}
+  th:nth-child(3), td:nth-child(3){width:14%;font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-soft);}
+  th:nth-child(4), td:nth-child(4){width:46%;}
+  th:nth-child(5), td:nth-child(5){width:20%;}
+
+  .lozenge{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;
+    border-radius:99px;padding:3px 9px;white-space:nowrap;
+  }
+  .lozenge.warn{background:var(--warn-soft);color:var(--warn);}
+  .lozenge.good{background:var(--good-soft);color:var(--good);}
+  .lozenge.bad{background:var(--bad-soft);color:var(--bad);}
+
+  footer{margin-top:24px;font-size:11.5px;color:var(--ink-soft);text-align:center;}
+</style>
+
+<div class="wrap">
+  <div class="banner">
+    <span class="tag">Preview</span>
+    <span><b>This is what <code>wiki.py</code> generated</b>, rendered for reading &mdash; not a live Confluence page. There's no Atlassian account connected in this environment to publish it to for real; the Confluence-markup source is in <code>output/wiki_page.confluence</code>, ready to paste into a real page the moment there is one.</span>
+  </div>
+  <div class="page">
+<h1>Mainframe Knowledge Recovery — Business Rules (Draft)</h1>
+<div class="panel info"><b>Review status</b><p>Every row below was extracted from a specific COBOL paragraph and carries its source citation. None of these are authoritative until an SME confirms or corrects them.</p></div>
+<h2>ACCTINQ</h2>
+<p><b>Coverage:</b> 4 / 4 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>ACCTINQ-A1</td><td>1000-READ-ACCOUNT</td><td>src/ACCTINQ.cbl:1000-READ-ACCOUNT</td><td>When a customer account inquiry is requested, the system looks up the account record; if no matching account is found, it displays an &quot;ACCOUNT NOT FOUND&quot; message and does not display any account details.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTINQ-A2</td><td>1000-READ-ACCOUNT</td><td>src/ACCTINQ.cbl:1000-READ-ACCOUNT</td><td>This account inquiry function is read-only: it only displays the current balance and status, and never updates account information.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTINQ-A3</td><td>2000-DISPLAY-BALANCE</td><td>src/ACCTINQ.cbl:2000-DISPLAY-BALANCE</td><td>When the account is found, the inquiry result displayed to the user includes the account identifier, the current account balance, and the account status.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<hr>
+<h2>ACCTMSTR</h2>
+<p><b>Coverage:</b> 20 / 20 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>ACCTMSTR-A1</td><td>2100-READ-NEXT-ACCOUNT</td><td>src/ACCTMSTR.cbl:2100-READ-NEXT-ACCOUNT</td><td>Only Savings and Checking are recognized account types; any other account type is logged as a data exception but the account still continues through processing.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A2</td><td>2200-VALIDATE-ACCOUNT-TYPE</td><td>src/ACCTMSTR.cbl:2200-VALIDATE-ACCOUNT-TYPE</td><td>When an account&#x27;s type is neither Savings nor Checking, the system displays a data exception message identifying the account, but does not stop processing it.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A3</td><td>3100-CALC-DAYS-SINCE-LAST-TRAN</td><td>src/ACCTMSTR.cbl:3100-CALC-DAYS-SINCE-LAST-TRAN</td><td>The number of days since an account&#x27;s last transaction is calculated by comparing today&#x27;s date to the account&#x27;s last transaction date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A4</td><td>3200-MARK-DORMANT</td><td>src/ACCTMSTR.cbl:3200-MARK-DORMANT</td><td>An active account with no transaction activity for more than 180 days is automatically reclassified as dormant.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A5</td><td>3300-CLOSE-LONG-DORMANT</td><td>src/ACCTMSTR.cbl:3300-CLOSE-LONG-DORMANT</td><td>A dormant account with no transaction activity for more than 365 days is automatically closed by the system.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A6</td><td>3400-SET-FEE-CODE</td><td>src/ACCTMSTR.cbl:3400-SET-FEE-CODE</td><td>For checking accounts, a fee code is assigned based on balance: accounts with a negative balance get an overdraft fee code, while accounts with a zero or positive balance get the standard fee code.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A7</td><td>3400-SET-FEE-CODE</td><td>src/ACCTMSTR.cbl:3400-SET-FEE-CODE</td><td>The fee code must only ever be set for checking accounts; savings accounts share the same stored data location for their interest rate, so setting a fee code on a savings account would corrupt its recorded interest rate.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A8</td><td>4100-CHECK-FEE-WAIVER-MSTR</td><td>src/ACCTMSTR.cbl:4100-CHECK-FEE-WAIVER-MSTR</td><td>The monthly maintenance fee is waived if the account balance is more than $500.00; if the balance is $500.00 or less, the fee is applied.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A9</td><td>4000-MONTHLY-FEE-PROCESSING</td><td>src/ACCTMSTR.cbl:4000-MONTHLY-FEE-PROCESSING</td><td>Monthly maintenance fee waiver checking is only performed for accounts that are currently active (not dormant or closed).</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A10</td><td>4200-APPLY-MONTHLY-FEE</td><td>src/ACCTMSTR.cbl:4200-APPLY-MONTHLY-FEE</td><td>When a monthly maintenance fee is applied, it is deducted directly from the account&#x27;s balance.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A11</td><td>4300-WRITE-FEE-TRANSACTION</td><td>src/ACCTMSTR.cbl:4300-WRITE-FEE-TRANSACTION</td><td>Every time a monthly maintenance fee is applied, a fee transaction record is created showing the account, the fee amount, the resulting balance, and the date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A12</td><td>5100-UPDATE-DORMANT-COUNTER</td><td>src/ACCTMSTR.cbl:5100-UPDATE-DORMANT-COUNTER</td><td>The account record keeps a running count of days since the last transaction, updated each processing cycle.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>ACCTMSTR-A13</td><td>7000-PRODUCE-CONTROL-TOTALS</td><td>src/ACCTMSTR.cbl:7000-PRODUCE-CONTROL-TOTALS</td><td>At the end of each run, a control report is produced summarizing the total accounts processed, the number newly marked dormant, the number closed, and the number of monthly fees charged.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<div class="panel note"><b>Excluded as dead code</b><p>The following paragraphs exist in source but are never PERFORMed from ACCTMSTR&#x27;s entry point, so no rules were extracted from them: 4700-LEGACY-OVERDRAFT-CHARGE, 4750-LEGACY-OVERDRAFT-NOTIFY.</p></div>
+<hr>
+<h2>DEPOSIT</h2>
+<p><b>Coverage:</b> 8 / 8 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>DEPOSIT-A1</td><td>2000-READ-ACCOUNT</td><td>src/DEPOSIT.cbl:2000-READ-ACCOUNT</td><td>If the account number on the deposit cannot be found in the account file, the deposit is rejected.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A2</td><td>2100-VALIDATE-ACCOUNT</td><td>src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT</td><td>A deposit is rejected if the account status is closed.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A3</td><td>2100-VALIDATE-ACCOUNT</td><td>src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT</td><td>If the account is dormant (and not closed), a deposit automatically reactivates the account to active status.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A4</td><td>3000-POST-DEPOSIT</td><td>src/DEPOSIT.cbl:3000-POST-DEPOSIT</td><td>The deposit amount is added to the account&#x27;s current balance.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A5</td><td>3000-POST-DEPOSIT</td><td>src/DEPOSIT.cbl:3000-POST-DEPOSIT</td><td>When a deposit is posted, the account&#x27;s last-transaction date is updated to the current date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A6</td><td>3100-CHECK-FEE-WAIVER</td><td>src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER</td><td>If the account balance after the deposit is at or above the fee-waiver threshold, the monthly maintenance fee is waived for this account.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A7</td><td>3100-CHECK-FEE-WAIVER</td><td>src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER</td><td>If the account balance after the deposit is below the fee-waiver threshold, a monthly maintenance fee is immediately deducted from the account balance.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A8</td><td>4000-WRITE-TRANSACTION</td><td>src/DEPOSIT.cbl:4000-WRITE-TRANSACTION</td><td>Every accepted deposit is recorded as a transaction log entry showing the account number, a transaction type of deposit, the deposit amount, the resulting account balance, and the date of the transaction.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A9</td><td>4000-WRITE-TRANSACTION</td><td>src/DEPOSIT.cbl:4000-WRITE-TRANSACTION</td><td>When a deposit is accepted, the account&#x27;s stored record is updated to reflect the new balance and status.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>DEPOSIT-A10</td><td>0000-MAIN</td><td>src/DEPOSIT.cbl:0000-MAIN</td><td>If the account fails validation (not found or closed), no posting, fee check, or transaction logging occurs for that deposit.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<hr>
+<h2>INTCALC</h2>
+<p><b>Coverage:</b> 9 / 9 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>INTCALC-A1</td><td>2100-CHECK-ELIGIBLE</td><td>src/INTCALC.cbl:2100-CHECK-ELIGIBLE</td><td>Interest is only calculated for accounts that are both a savings account type and currently active; checking accounts, dormant accounts, and closed accounts are not eligible to earn interest.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A2</td><td>2200-APPLY-RATE-TIER</td><td>src/INTCALC.cbl:2200-APPLY-RATE-TIER</td><td>If an eligible account&#x27;s balance is $10,000.00 or more, the account earns a bonus annual interest rate of 4.5% instead of its normally stored interest rate.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A3</td><td>2200-APPLY-RATE-TIER</td><td>src/INTCALC.cbl:2200-APPLY-RATE-TIER</td><td>If an eligible account&#x27;s balance is below $10,000.00, the account earns interest at its individually stored interest rate rather than the bonus rate.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A4</td><td>2300-COMPUTE-INTEREST</td><td>src/INTCALC.cbl:2300-COMPUTE-INTEREST</td><td>Monthly interest earned on an eligible account is calculated as the account&#x27;s balance multiplied by its applicable annual interest rate, divided by 12, rounded to the nearest cent.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A5</td><td>3000-POST-INTEREST</td><td>src/INTCALC.cbl:3000-POST-INTEREST</td><td>The calculated monthly interest is added to the account&#x27;s balance, crediting the account.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A6</td><td>3000-POST-INTEREST</td><td>src/INTCALC.cbl:3000-POST-INTEREST</td><td>When interest is posted to an account, the account&#x27;s last transaction date is updated to the current processing date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A7</td><td>4000-WRITE-TRANSACTION</td><td>src/INTCALC.cbl:4000-WRITE-TRANSACTION</td><td>Each interest payment is recorded as a transaction history entry showing the account number, a transaction type of &#x27;IN&#x27; (interest), the interest amount credited, the resulting account balance after posting, and the date of posting.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>INTCALC-A8</td><td>4000-WRITE-TRANSACTION</td><td>src/INTCALC.cbl:4000-WRITE-TRANSACTION</td><td>The account&#x27;s master record is updated to reflect the new balance and last transaction date whenever interest is posted.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<hr>
+<h2>OVRDRAFT</h2>
+<p><b>Coverage:</b> 9 / 9 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>OVRDRAFT-A1</td><td>INIT_PROC</td><td>src/OVRDRAFT.pli:INIT_PROC</td><td>Every overdraft protection request is defaulted to &quot;denied&quot; and &quot;no link&quot; before processing begins, so that if processing fails partway through, the request is never mistakenly approved.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A2</td><td>VALIDATE_LINK</td><td>src/OVRDRAFT.pli:VALIDATE_LINK</td><td>If an account has no overdraft protection linked to it, the overdraft request is denied immediately without ever checking an overdraft limit.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A3</td><td>CHECK_LIMIT</td><td>src/OVRDRAFT.pli:CHECK_LIMIT</td><td>An overdraft request is approved only if the requested amount does not exceed the account&#x27;s linked overdraft limit; otherwise it is denied.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A4</td><td>CALC_FEE</td><td>src/OVRDRAFT.pli:CALC_FEE</td><td>The first use of overdraft protection by an account in a calendar month is free of charge.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A5</td><td>CALC_FEE</td><td>src/OVRDRAFT.pli:CALC_FEE</td><td>Every overdraft protection use after the first one in the same calendar month incurs a flat fee.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A6</td><td>APPLY_FEE</td><td>src/OVRDRAFT.pli:APPLY_FEE</td><td>Each time an overdraft fee is calculated and applied, the account&#x27;s count of overdraft protection uses for the month is increased by one.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>OVRDRAFT-A7</td><td>WRITE_RESPONSE</td><td>src/OVRDRAFT.pli:WRITE_RESPONSE</td><td>The response to an overdraft request always includes the approval decision and the fee amount, even when the fee is zero.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<div class="panel note"><b>Excluded as dead code</b><p>The following paragraphs exist in source but are never PERFORMed from OVRDRAFT&#x27;s entry point, so no rules were extracted from them: LEGACY_FLAT_FEE.</p></div>
+<hr>
+<h2>STMTGEN</h2>
+<p><b>Coverage:</b> 7 / 7 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>STMTGEN-A1</td><td>3000-PRINT-HEADER</td><td>src/STMTGEN.cbl:3000-PRINT-HEADER</td><td>Each customer statement begins with a header line showing the account identifier and the current account balance.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>STMTGEN-A2</td><td>4000-PRINT-TRANSACTIONS</td><td>src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS</td><td>A statement lists only the transactions that belong to the account currently being statemented (i.e., transactions are matched to the account by account ID).</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>STMTGEN-A3</td><td>4000-PRINT-TRANSACTIONS</td><td>src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS</td><td>Each listed transaction line on the statement shows the transaction type, the transaction amount, and the transaction date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>STMTGEN-A4</td><td>5000-UPDATE-LAST-STMT-DATE</td><td>src/STMTGEN.cbl:5000-UPDATE-LAST-STMT-DATE</td><td>Whenever a statement is generated for an account, the account&#x27;s last-activity date is updated to the current date, regardless of whether any customer transactions occurred during the statement period.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<hr>
+<h2>WITHDRWL</h2>
+<p><b>Coverage:</b> 8 / 8 reachable paragraphs processed (100.0%)</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Rule ID</th><th>Paragraph</th><th>Citation</th><th>Business Rule</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>WITHDRWL-A1</td><td>2000-READ-ACCOUNT</td><td>src/WITHDRWL.cbl:2000-READ-ACCOUNT</td><td>A withdrawal request is rejected if the account cannot be found.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>WITHDRWL-A2</td><td>2100-VALIDATE-STATUS</td><td>src/WITHDRWL.cbl:2100-VALIDATE-STATUS</td><td>A withdrawal is rejected if the account is closed or dormant; a dormant account must be reactivated with a deposit before a withdrawal can be made.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>WITHDRWL-A3</td><td>2200-VALIDATE-FUNDS</td><td>src/WITHDRWL.cbl:2200-VALIDATE-FUNDS</td><td>A withdrawal is rejected if completing it would drop the account balance below a required $100.00 overdraft cushion.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>WITHDRWL-A4</td><td>3000-POST-WITHDRAWAL</td><td>src/WITHDRWL.cbl:3000-POST-WITHDRAWAL</td><td>When a withdrawal is approved, the withdrawal amount is deducted from the account balance and the account&#x27;s last transaction date is updated to the current date.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+<tr><td>WITHDRWL-A5</td><td>4000-WRITE-TRANSACTION</td><td>src/WITHDRWL.cbl:4000-WRITE-TRANSACTION</td><td>An approved withdrawal is recorded as a transaction record showing the account id, a transaction type of withdrawal, the withdrawal amount, the resulting account balance, and the transaction date, and the account&#x27;s record is updated to reflect the new balance.</td><td><span class="lozenge warn">NEEDS SME CONFIRM</span></td></tr>
+</tbody></table></div>
+<hr>
+  </div>
+  <footer>Rendered from the real Confluence wiki-markup output &middot; CP-04 AI Hackathon</footer>
+</div>

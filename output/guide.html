@@ -1,0 +1,284 @@
+<title>Rule Recovery Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F5F6F3; --panel:#FFFFFF; --panel-2:#EDEFEA;
+    --ink:#1B2430; --ink-soft:#5B6472; --border:rgba(27,36,48,0.12);
+    --accent:#0F8F8A; --accent-deep:#0A6B67; --accent-soft:rgba(15,143,138,0.10);
+    --warn:#9A6B12; --warn-soft:rgba(183,121,31,0.14);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171A; --panel:#1C2024; --panel-2:#22262B;
+      --ink:#E8EAED; --ink-soft:#9AA3AD; --border:rgba(232,234,237,0.14);
+      --accent:#3DDAC3; --accent-deep:#179384; --accent-soft:rgba(61,218,195,0.14);
+      --warn:#E0A93E; --warn-soft:rgba(224,169,62,0.16);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171A; --panel:#1C2024; --panel-2:#22262B;
+    --ink:#E8EAED; --ink-soft:#9AA3AD; --border:rgba(232,234,237,0.14);
+    --accent:#3DDAC3; --accent-deep:#179384; --accent-soft:rgba(61,218,195,0.14);
+    --warn:#E0A93E; --warn-soft:rgba(224,169,62,0.16);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,sans-serif;padding:32px 16px 64px;}
+  .wrap{max-width:780px;margin:0 auto;}
+  code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+
+  .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;}
+  h1{font-family:"Fraunces",Georgia,serif;font-size:clamp(28px,4vw,38px);font-weight:600;margin:0 0 14px;letter-spacing:-.01em;text-wrap:balance;}
+  p.lede{font-size:15px;line-height:1.65;color:var(--ink-soft);max-width:68ch;margin:0 0 10px;}
+
+  .stat-strip{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 30px;}
+  .stat{flex:1 1 110px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+  .stat .n{font-family:"Fraunces",Georgia,serif;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--accent);}
+  .stat .l{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+
+  h2.section-title{font-family:"Fraunces",Georgia,serif;font-size:20px;font-weight:600;margin:38px 0 6px;letter-spacing:-.005em;}
+  p.section-note{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px;line-height:1.6;max-width:68ch;}
+
+  .arch-list{margin:0 0 4px;padding-left:0;list-style:none;}
+  .arch-list li{font-size:13.5px;line-height:1.6;padding:8px 0;border-bottom:1px solid var(--border);}
+  .arch-list li:last-child{border-bottom:none;}
+  .arch-list code{color:var(--accent);}
+
+  .program{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:20px 22px;margin-bottom:16px;
+  }
+  .program-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px;}
+  .program h2{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:700;margin:0;}
+  .role-badge{
+    font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:2px 8px;
+  }
+  .tagline{font-size:13.5px;font-weight:600;color:var(--ink);margin:6px 0 4px;}
+  .summary{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 10px;max-width:64ch;}
+  .cov-line{font-size:11.5px;color:var(--ink-soft);margin:0 0 10px;font-variant-numeric:tabular-nums;}
+  ul.rules{list-style:none;margin:0;padding:0;border-top:1px solid var(--border);}
+  ul.rules li{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5;}
+  ul.rules li.none{color:var(--ink-soft);font-style:italic;}
+  ul.rules .cite{display:block;font-size:10.5px;color:var(--accent);margin-bottom:2px;}
+  ul.rules .rtext{color:var(--ink);}
+  .dead-note{
+    margin:12px 0 0;padding:10px 12px;font-size:12px;line-height:1.55;color:var(--warn);
+    background:var(--warn-soft);border-radius:8px;
+  }
+  .dead-note code{color:inherit;}
+
+  .see-also{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  @media (max-width:540px){.see-also{grid-template-columns:1fr;}}
+  .see-card{
+    display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;padding:12px 14px;text-decoration:none;color:inherit;
+  }
+  .see-card:hover{border-color:var(--accent);}
+  .see-card .t{font-size:13px;font-weight:600;color:var(--ink);}
+  .see-card .d{font-size:11.5px;color:var(--ink-soft);}
+
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--ink-soft);}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">CP-04 &middot; Hogan Estate &middot; Deposit / Account Servicing</p>
+  <h1>What the mainframe programs do</h1>
+  <p class="lede">
+    A simplified deposit and account-servicing module: six COBOL programs running on a
+    mainframe, from a teller posting a single deposit to the nightly batch run that charges
+    fees, closes dormant accounts, and prints statements &mdash; plus a seventh program,
+    overdraft protection, written in PL/I rather than COBOL, the way real mainframe estates
+    often mix languages by subsystem. What follows is a plain-English account of what each
+    program actually does and the business rules inside it &mdash; read from the live code
+    paragraph by paragraph, not from documentation that may have gone stale.
+  </p>
+  <p class="lede">
+    Three COBOL programs are <b>online</b>, run ad hoc in any order whenever a transaction
+    comes in: <code>ACCTINQ</code>, <code>DEPOSIT</code>, <code>WITHDRWL</code>. Three run as
+    a <b>nightly batch</b> in a fixed sequence set by the JCL: <code>ACCTMSTR</code>, then
+    <code>INTCALC</code>, then <code>STMTGEN</code>. All six read and write the same two
+    shared files &mdash; <code>ACCOUNT-FILE</code> and <code>TRANSACTION-FILE</code> &mdash;
+    and the batch's output is unloaded nightly into DB2. <code>OVRDRAFT</code>, the PL/I
+    program, runs independently of all six and doesn't touch those files.
+  </p>
+
+  <h2 class="section-title">What it accomplishes</h2>
+  <p class="section-note">The programs are the mechanism. This is the job they do.</p>
+  <ul class="arch-list">
+    <li><b>Lets a customer move money</b> &mdash; deposit into or withdraw from their account, with guardrails: a closed account can't be touched, a withdrawal can't push the balance past a $100 overdraft cushion, and a dormant account is automatically reactivated the moment a deposit comes in rather than requiring a separate "unfreeze" step.</li>
+    <li><b>Rewards savers, charges accounts that run low</b> &mdash; savings balances earn monthly interest, with a bonus rate once a balance clears $10,000; checking and savings accounts below a minimum balance are charged a monthly maintenance fee instead of earning anything.</li>
+    <li><b>Winds down abandoned accounts on its own</b> &mdash; an account with no activity for 180 days is flagged dormant, and after a full year with still no activity it's closed outright, so nobody has to manually notice and act on accounts customers have walked away from.</li>
+    <li><b>Backstops honest overdrafts instead of just bouncing them</b> &mdash; the PL/I program decides, per request, whether a withdrawal that would overdraw an account can be covered by linked overdraft protection, waiving the fee on an account's first use each month rather than penalizing an occasional slip-up.</li>
+    <li><b>Keeps the customer informed</b> &mdash; a statement is produced for every account, showing the current balance and every transaction behind it.</li>
+    <li><b>Feeds the rest of the bank</b> &mdash; account and transaction data is unloaded into DB2 every night, so reporting, compliance, and other downstream systems are working from the same numbers the account-servicing programs just produced.</li>
+  </ul>
+
+  <div class="stat-strip">
+    <div class="stat"><span class="n">7</span><span class="l">Programs</span></div>
+    <div class="stat"><span class="n">50</span><span class="l">Business rules</span></div>
+    <div class="stat"><span class="n">3</span><span class="l">Dead paragraphs excluded</span></div>
+    <div class="stat"><span class="n">3</span><span class="l">Contradictions caught</span></div>
+  </div>
+
+  <h2 class="section-title">How the system is organized</h2>
+  <p class="section-note">No direct program-to-program calls among the six COBOL programs &mdash; the two shared files are the only thing tying them together. The PL/I program stands apart entirely.</p>
+  <ul class="arch-list">
+    <li><b>Online, any order</b> &mdash; <code>ACCTINQ</code> (balance lookup, read-only), <code>DEPOSIT</code>, <code>WITHDRWL</code>. Each opens <code>ACCOUNT-FILE</code> by account ID; <code>DEPOSIT</code> and <code>WITHDRWL</code> also update it and append to <code>TRANSACTION-FILE</code>.</li>
+    <li><b>Nightly batch, fixed order</b> (<code>DPBATCH.jcl</code>) &mdash; STEP010 <code>ACCTMSTR</code> (dormancy, closure, fee codes, monthly fees, control totals), STEP020 <code>INTCALC</code> (interest), STEP030 <code>STMTGEN</code> (statements). Each step reads <code>ACCOUNT-FILE</code> sequentially, one account after another.</li>
+    <li><b>Shared files</b> &mdash; <code>ACCOUNT-FILE</code> (VSAM, keyed by account ID) and <code>TRANSACTION-FILE</code> (VSAM, a sequential log) are the only state the six COBOL programs have in common.</li>
+    <li><b>Downstream</b> &mdash; a final batch step unloads both files into DB2 as <code>ACCOUNT_MASTER</code> and <code>TRANSACTION_LOG</code>.</li>
+    <li><b>PL/I companion, separate</b> &mdash; <code>OVRDRAFT</code> runs on its own, with its own request/response files, and isn't wired into the COBOL programs' shared state in this fixture.</li>
+  </ul>
+
+  <h2 class="section-title">Every program</h2>
+  <p class="section-note">Every rule below is pulled live from the extraction agent's real output &mdash; nothing here is hand-typed.</p>
+
+    <section class="program" id="prog-acctinq">
+      <div class="program-head">
+        <h2>ACCTINQ</h2>
+        <span class="role-badge">Online / ad hoc</span>
+      </div>
+      <p class="tagline">Read-only account lookup</p>
+      <p class="summary">The simplest program in the module. Looks up one account by ID and displays its balance and status. Never writes to any file.</p>
+      <p class="cov-line">4/4 paragraphs · 100% coverage · 3 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/ACCTINQ.cbl:1000-READ-ACCOUNT</span><span class="rtext">When a customer account inquiry is requested, the system looks up the account record; if no matching account is found, it displays an &quot;ACCOUNT NOT FOUND&quot; message and does not display any account details.</span></li>
+<li><span class="cite mono">src/ACCTINQ.cbl:1000-READ-ACCOUNT</span><span class="rtext">This account inquiry function is read-only: it only displays the current balance and status, and never updates account information.</span></li>
+<li><span class="cite mono">src/ACCTINQ.cbl:2000-DISPLAY-BALANCE</span><span class="rtext">When the account is found, the inquiry result displayed to the user includes the account identifier, the current account balance, and the account status.</span></li>
+      </ul>
+      
+    </section>
+    <section class="program" id="prog-deposit">
+      <div class="program-head">
+        <h2>DEPOSIT</h2>
+        <span class="role-badge">Online / ad hoc</span>
+      </div>
+      <p class="tagline">Posts a deposit</p>
+      <p class="summary">Posts a deposit to an account: rejects deposits to closed accounts, reactivates dormant ones, applies the monthly maintenance fee waiver at a $500 balance threshold, and logs the transaction.</p>
+      <p class="cov-line">8/8 paragraphs · 100% coverage · 10 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/DEPOSIT.cbl:2000-READ-ACCOUNT</span><span class="rtext">If the account number on the deposit cannot be found in the account file, the deposit is rejected.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT</span><span class="rtext">A deposit is rejected if the account status is closed.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:2100-VALIDATE-ACCOUNT</span><span class="rtext">If the account is dormant (and not closed), a deposit automatically reactivates the account to active status.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:3000-POST-DEPOSIT</span><span class="rtext">The deposit amount is added to the account&#x27;s current balance.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:3000-POST-DEPOSIT</span><span class="rtext">When a deposit is posted, the account&#x27;s last-transaction date is updated to the current date.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER</span><span class="rtext">If the account balance after the deposit is at or above the fee-waiver threshold, the monthly maintenance fee is waived for this account.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:3100-CHECK-FEE-WAIVER</span><span class="rtext">If the account balance after the deposit is below the fee-waiver threshold, a monthly maintenance fee is immediately deducted from the account balance.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:4000-WRITE-TRANSACTION</span><span class="rtext">Every accepted deposit is recorded as a transaction log entry showing the account number, a transaction type of deposit, the deposit amount, the resulting account balance, and the date of the transaction.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:4000-WRITE-TRANSACTION</span><span class="rtext">When a deposit is accepted, the account&#x27;s stored record is updated to reflect the new balance and status.</span></li>
+<li><span class="cite mono">src/DEPOSIT.cbl:0000-MAIN</span><span class="rtext">If the account fails validation (not found or closed), no posting, fee check, or transaction logging occurs for that deposit.</span></li>
+      </ul>
+      
+    </section>
+    <section class="program" id="prog-withdrwl">
+      <div class="program-head">
+        <h2>WITHDRWL</h2>
+        <span class="role-badge">Online / ad hoc</span>
+      </div>
+      <p class="tagline">Posts a withdrawal</p>
+      <p class="summary">Posts a withdrawal: rejects closed or dormant accounts, enforces a $100 overdraft cushion, and logs the transaction.</p>
+      <p class="cov-line">8/8 paragraphs · 100% coverage · 5 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/WITHDRWL.cbl:2000-READ-ACCOUNT</span><span class="rtext">A withdrawal request is rejected if the account cannot be found.</span></li>
+<li><span class="cite mono">src/WITHDRWL.cbl:2100-VALIDATE-STATUS</span><span class="rtext">A withdrawal is rejected if the account is closed or dormant; a dormant account must be reactivated with a deposit before a withdrawal can be made.</span></li>
+<li><span class="cite mono">src/WITHDRWL.cbl:2200-VALIDATE-FUNDS</span><span class="rtext">A withdrawal is rejected if completing it would drop the account balance below a required $100.00 overdraft cushion.</span></li>
+<li><span class="cite mono">src/WITHDRWL.cbl:3000-POST-WITHDRAWAL</span><span class="rtext">When a withdrawal is approved, the withdrawal amount is deducted from the account balance and the account&#x27;s last transaction date is updated to the current date.</span></li>
+<li><span class="cite mono">src/WITHDRWL.cbl:4000-WRITE-TRANSACTION</span><span class="rtext">An approved withdrawal is recorded as a transaction record showing the account id, a transaction type of withdrawal, the withdrawal amount, the resulting account balance, and the transaction date, and the account&#x27;s record is updated to reflect the new balance.</span></li>
+      </ul>
+      
+    </section>
+    <section class="program" id="prog-intcalc">
+      <div class="program-head">
+        <h2>INTCALC</h2>
+        <span class="role-badge">Nightly batch · STEP020</span>
+      </div>
+      <p class="tagline">Monthly interest calculation</p>
+      <p class="summary">Calculates and posts monthly interest for active savings accounts only. Balances of $10,000 or more earn a bonus rate; smaller balances earn the account&#x27;s own stored rate — which physically shares storage with the checking-account fee code via REDEFINES.</p>
+      <p class="cov-line">9/9 paragraphs · 100% coverage · 8 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/INTCALC.cbl:2100-CHECK-ELIGIBLE</span><span class="rtext">Interest is only calculated for accounts that are both a savings account type and currently active; checking accounts, dormant accounts, and closed accounts are not eligible to earn interest.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:2200-APPLY-RATE-TIER</span><span class="rtext">If an eligible account&#x27;s balance is $10,000.00 or more, the account earns a bonus annual interest rate of 4.5% instead of its normally stored interest rate.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:2200-APPLY-RATE-TIER</span><span class="rtext">If an eligible account&#x27;s balance is below $10,000.00, the account earns interest at its individually stored interest rate rather than the bonus rate.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:2300-COMPUTE-INTEREST</span><span class="rtext">Monthly interest earned on an eligible account is calculated as the account&#x27;s balance multiplied by its applicable annual interest rate, divided by 12, rounded to the nearest cent.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:3000-POST-INTEREST</span><span class="rtext">The calculated monthly interest is added to the account&#x27;s balance, crediting the account.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:3000-POST-INTEREST</span><span class="rtext">When interest is posted to an account, the account&#x27;s last transaction date is updated to the current processing date.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:4000-WRITE-TRANSACTION</span><span class="rtext">Each interest payment is recorded as a transaction history entry showing the account number, a transaction type of &#x27;IN&#x27; (interest), the interest amount credited, the resulting account balance after posting, and the date of posting.</span></li>
+<li><span class="cite mono">src/INTCALC.cbl:4000-WRITE-TRANSACTION</span><span class="rtext">The account&#x27;s master record is updated to reflect the new balance and last transaction date whenever interest is posted.</span></li>
+      </ul>
+      
+    </section>
+    <section class="program" id="prog-acctmstr">
+      <div class="program-head">
+        <h2>ACCTMSTR</h2>
+        <span class="role-badge">Nightly batch · STEP010</span>
+      </div>
+      <p class="tagline">Account maintenance — dormancy, fees, closure</p>
+      <p class="summary">The largest and most complex program. Marks accounts dormant after 180 days of inactivity, closes them after 365, assigns checking-account fee codes, applies the monthly maintenance fee (at a threshold that quietly drifted from DEPOSIT&#x27;s version), and produces the batch&#x27;s control totals. Also contains two legacy paragraphs that nothing calls anymore.</p>
+      <p class="cov-line">20/20 paragraphs · 100% coverage · 13 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/ACCTMSTR.cbl:2100-READ-NEXT-ACCOUNT</span><span class="rtext">Only Savings and Checking are recognized account types; any other account type is logged as a data exception but the account still continues through processing.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:2200-VALIDATE-ACCOUNT-TYPE</span><span class="rtext">When an account&#x27;s type is neither Savings nor Checking, the system displays a data exception message identifying the account, but does not stop processing it.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:3100-CALC-DAYS-SINCE-LAST-TRAN</span><span class="rtext">The number of days since an account&#x27;s last transaction is calculated by comparing today&#x27;s date to the account&#x27;s last transaction date.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:3200-MARK-DORMANT</span><span class="rtext">An active account with no transaction activity for more than 180 days is automatically reclassified as dormant.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:3300-CLOSE-LONG-DORMANT</span><span class="rtext">A dormant account with no transaction activity for more than 365 days is automatically closed by the system.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:3400-SET-FEE-CODE</span><span class="rtext">For checking accounts, a fee code is assigned based on balance: accounts with a negative balance get an overdraft fee code, while accounts with a zero or positive balance get the standard fee code.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:3400-SET-FEE-CODE</span><span class="rtext">The fee code must only ever be set for checking accounts; savings accounts share the same stored data location for their interest rate, so setting a fee code on a savings account would corrupt its recorded interest rate.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:4100-CHECK-FEE-WAIVER-MSTR</span><span class="rtext">The monthly maintenance fee is waived if the account balance is more than $500.00; if the balance is $500.00 or less, the fee is applied.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:4000-MONTHLY-FEE-PROCESSING</span><span class="rtext">Monthly maintenance fee waiver checking is only performed for accounts that are currently active (not dormant or closed).</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:4200-APPLY-MONTHLY-FEE</span><span class="rtext">When a monthly maintenance fee is applied, it is deducted directly from the account&#x27;s balance.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:4300-WRITE-FEE-TRANSACTION</span><span class="rtext">Every time a monthly maintenance fee is applied, a fee transaction record is created showing the account, the fee amount, the resulting balance, and the date.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:5100-UPDATE-DORMANT-COUNTER</span><span class="rtext">The account record keeps a running count of days since the last transaction, updated each processing cycle.</span></li>
+<li><span class="cite mono">src/ACCTMSTR.cbl:7000-PRODUCE-CONTROL-TOTALS</span><span class="rtext">At the end of each run, a control report is produced summarizing the total accounts processed, the number newly marked dormant, the number closed, and the number of monthly fees charged.</span></li>
+      </ul>
+      <p class="dead-note"><b>Excluded as dead code:</b> <code>4700-LEGACY-OVERDRAFT-CHARGE</code>, <code>4750-LEGACY-OVERDRAFT-NOTIFY</code> — present in source, never reached from the entry point, so never handed to the extraction agent.</p>
+    </section>
+    <section class="program" id="prog-stmtgen">
+      <div class="program-head">
+        <h2>STMTGEN</h2>
+        <span class="role-badge">Nightly batch · STEP030</span>
+      </div>
+      <p class="tagline">Statement generation</p>
+      <p class="summary">Reads each account and its transactions and writes a printed statement. Opens both input files read-only, so its own &#x27;refresh the last-activity date&#x27; logic never actually persists to disk.</p>
+      <p class="cov-line">7/7 paragraphs · 100% coverage · 4 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/STMTGEN.cbl:3000-PRINT-HEADER</span><span class="rtext">Each customer statement begins with a header line showing the account identifier and the current account balance.</span></li>
+<li><span class="cite mono">src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS</span><span class="rtext">A statement lists only the transactions that belong to the account currently being statemented (i.e., transactions are matched to the account by account ID).</span></li>
+<li><span class="cite mono">src/STMTGEN.cbl:4000-PRINT-TRANSACTIONS</span><span class="rtext">Each listed transaction line on the statement shows the transaction type, the transaction amount, and the transaction date.</span></li>
+<li><span class="cite mono">src/STMTGEN.cbl:5000-UPDATE-LAST-STMT-DATE</span><span class="rtext">Whenever a statement is generated for an account, the account&#x27;s last-activity date is updated to the current date, regardless of whether any customer transactions occurred during the statement period.</span></li>
+      </ul>
+      
+    </section>
+    <section class="program" id="prog-ovrdraft">
+      <div class="program-head">
+        <h2>OVRDRAFT</h2>
+        <span class="role-badge">Online / ad hoc · PL/I</span>
+      </div>
+      <p class="tagline">Overdraft protection decision</p>
+      <p class="summary">A companion subsystem written in PL/I rather than COBOL — real mainframe estates mix languages like this routinely. Decides whether a withdrawal that would overdraw an account can be covered by linked overdraft protection: denies outright if nothing is linked, checks the request against the linked limit, and waives the fee on the account&#x27;s first use of the month. Runs independently of the other six programs — it doesn&#x27;t share their VSAM files.</p>
+      <p class="cov-line">9/9 paragraphs · 100% coverage · 7 rules extracted</p>
+      <ul class="rules">
+        <li><span class="cite mono">src/OVRDRAFT.pli:INIT_PROC</span><span class="rtext">Every overdraft protection request is defaulted to &quot;denied&quot; and &quot;no link&quot; before processing begins, so that if processing fails partway through, the request is never mistakenly approved.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:VALIDATE_LINK</span><span class="rtext">If an account has no overdraft protection linked to it, the overdraft request is denied immediately without ever checking an overdraft limit.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:CHECK_LIMIT</span><span class="rtext">An overdraft request is approved only if the requested amount does not exceed the account&#x27;s linked overdraft limit; otherwise it is denied.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:CALC_FEE</span><span class="rtext">The first use of overdraft protection by an account in a calendar month is free of charge.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:CALC_FEE</span><span class="rtext">Every overdraft protection use after the first one in the same calendar month incurs a flat fee.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:APPLY_FEE</span><span class="rtext">Each time an overdraft fee is calculated and applied, the account&#x27;s count of overdraft protection uses for the month is increased by one.</span></li>
+<li><span class="cite mono">src/OVRDRAFT.pli:WRITE_RESPONSE</span><span class="rtext">The response to an overdraft request always includes the approval decision and the fee amount, even when the fee is zero.</span></li>
+      </ul>
+      <p class="dead-note"><b>Excluded as dead code:</b> <code>LEGACY_FLAT_FEE</code> — present in source, never reached from the entry point, so never handed to the extraction agent.</p>
+    </section>
+
+  <h2 class="section-title">Where this came from</h2>
+  <p class="section-note">These rules were recovered automatically, each one cited back to its source paragraph, by a small pipeline rather than typed up by hand. The links below go to the pipeline's architecture, its live results, and a way to ask it questions directly.</p>
+  <div class="see-also">
+<a class="see-card" href="https://claude.ai/artifact/SbAS2PByhBBYmoM7DqB2F4" target="_blank" rel="noopener"><span class="t">Rule Recovery Pipeline</span><span class="d">Architecture diagram</span></a>
+<a class="see-card" href="https://claude.ai/artifact/6EHFTvsqYwzStQM4YADDKv" target="_blank" rel="noopener"><span class="t">Rule Recovery Results</span><span class="d">Live results dashboard</span></a>
+<a class="see-card" href="https://claude.ai/artifact/6WnmFQGgRuwXk5XEFrPu7L" target="_blank" rel="noopener"><span class="t">Repo Genie</span><span class="d">Ask questions about this repo</span></a>
+<a class="see-card" href="https://github.com/MahalakshmiL/MainframeModernization" target="_blank" rel="noopener"><span class="t">GitHub repo</span><span class="d">Full source</span></a>
+  </div>
+
+  <footer>Deposit &amp; Account-Servicing System Guide &middot; CP-04 AI Hackathon &middot; generated from the real pipeline output, not a mockup</footer>
+</div>

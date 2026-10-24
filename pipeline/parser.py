@@ -215,14 +215,24 @@ def parse_program(cbl_path):
         "paragraphs": paragraphs,
         "reachable": sorted(reachable),
         "dead": dead,
+        "language": "COBOL",
     }
 
 
 def parse_all(src_dir=SRC_DIR):
+    """All COBOL (*.cbl) and PL/I (*.pli) programs in src_dir, merged into
+    one dict keyed by program name - every consumer downstream (flowchart,
+    dashboard, extract.py's agent loop) just iterates this dict and never
+    needs to know which language a given program is in."""
     programs = {}
     for cbl_path in sorted(src_dir.glob("*.cbl")):
         parsed = parse_program(cbl_path)
         programs[parsed["program"]] = parsed
+
+    from pipeline.parser_pli import parse_all as parse_all_pli
+    for name, parsed in parse_all_pli(src_dir).items():
+        programs[name] = parsed
+
     return programs
 
 

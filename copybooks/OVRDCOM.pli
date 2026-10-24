@@ -1,0 +1,7 @@
+/* OVRDCOM.PLI
+   Shared constants for the overdraft protection subsystem.
+   PL/I's %INCLUDE equivalent of a COBOL copybook. */
+
+   DCL OD_FEE_TIER1 FIXED DECIMAL(5,2) STATIC INIT(0.00);
+   DCL OD_FEE_TIER2 FIXED DECIMAL(5,2) STATIC INIT(35.00);
+   DCL OD_FREE_USES_PER_MONTH FIXED BINARY(15) STATIC INIT(1);

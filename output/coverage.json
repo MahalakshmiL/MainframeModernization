@@ -34,5 +34,11 @@
     "paragraphs_processed": 8,
     "coverage_pct": 100.0,
     "paragraphs_skipped": []
+  },
+  "OVRDRAFT": {
+    "paragraphs_total": 9,
+    "paragraphs_processed": 9,
+    "coverage_pct": 100.0,
+    "paragraphs_skipped": []
   }
 }

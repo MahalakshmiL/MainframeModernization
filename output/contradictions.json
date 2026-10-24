@@ -1,5 +1,20 @@
 {
-  "numeric_contradictions": [],
+  "numeric_contradictions": [
+    {
+      "page": "Account-Maintenance-Field-Reference.md",
+      "program": "ACCTMSTR",
+      "page_statement": "A dormant account with no transaction in the last 365 days is",
+      "page_numbers": [
+        "365"
+      ],
+      "matched_rule_id": "ACCTMSTR-A4",
+      "matched_rule_text": "An active account with no transaction activity for more than 180 days is automatically reclassified as dormant.",
+      "code_numbers": [
+        "180"
+      ],
+      "match_confidence": 0.33
+    }
+  ],
   "field_relationship_contradictions": [
     {
       "page": "Account-Maintenance-Field-Reference.md",

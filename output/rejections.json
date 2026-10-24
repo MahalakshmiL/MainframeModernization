@@ -1,9 +1,9 @@
 {
-  "INTCALC": [
+  "ACCTMSTR": [
     {
-      "paragraph": "2200-APPLY-RATE-TIER",
+      "paragraph": "",
       "rule_text": "",
-      "reason": "REJECTED: rule_text is empty."
+      "reason": "REJECTED: '' is not a reachable paragraph in ACCTMSTR. A rule cannot be cited to dead or nonexistent code."
     }
   ]
 }
